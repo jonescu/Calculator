@@ -1,4 +1,5 @@
 const decimalBtn = document.getElementById('decimal')
+const message = document.getElementById('message')
 const numberBtns = document.querySelectorAll('.number')
 const operands = document.querySelectorAll('.operand')
 const clearBtn = document.querySelector('.clear-btn')
@@ -17,13 +18,14 @@ function clear() {
     displayText.textContent = '0'
     firstOperand.textContent = ''
     currentOperator.textContent = ''
+    message.textContent = ''
     decimalBtn.disabled = false;
 }
 
 
 // CONCATENATE NUMBERS TO DISPLAY
 function append(string) {
-displayText.textContent += string
+    displayText.textContent += string
 }
 
 numberBtns.forEach(button => {
@@ -32,6 +34,9 @@ numberBtns.forEach(button => {
             displayText.textContent = ''
         } else if(displayText.className.includes('answer-exists')) {
             displayText.classList.toggle('answer-exists')
+            displayText.textContent = ''
+        } else if(displayText.textContent.length > 12) {
+            message.textContent = 'Maximum digits reached for display'
             displayText.textContent = ''
         }
         append(button.textContent)
@@ -45,11 +50,14 @@ operands.forEach(operand => {
             firstOperand.textContent = displayText.textContent
             displayText.textContent = ''
             currentOperator.textContent = operand.textContent;
-        } else if(firstOperand.textContent != '' && currentOperator.textContent != '') {
+            decimalBtn.disabled = false;
+        } 
+        else if(firstOperand.textContent != '' && currentOperator.textContent != '') {
              operate(currentOperator.textContent, firstOperand.textContent, displayText.textContent)
              firstOperand.textContent = displayText.textContent
              currentOperator.textContent = operand.textContent;
              displayText.textContent = ''
+             decimalBtn.disabled = false;
         }
     })
 });
@@ -68,34 +76,53 @@ computeBtn.addEventListener('click', function() {
 })
 
 //  BACKSPACE BUTTON
-function test(){
+function backspace(){
     displayText.textContent = displayText.textContent.slice(0, -1)
 }
-backspaceBtn.addEventListener('click', test)
+backspaceBtn.addEventListener('click', backspace)
 
 // OPERATIONS
 function add(a,b) {
-    let answer = a + b; 
-    displayText.textContent = answer;
-    return answer;
+    let answer = a + b;
+    var result = (answer - Math.floor(answer)) !== 0;
+    if(result == true) {
+        displayText.textContent = answer.toFixed(2)
+    } else {
+        displayText.textContent = answer;
+    }
 }
 
 function subtract(a,b) {
     let answer = a - b;
-    displayText.textContent = answer;
-    return answer;
+    var result = (answer - Math.floor(answer)) !== 0;
+    if(result == true) {
+        displayText.textContent = answer.toFixed(2)
+    } else {
+        displayText.textContent = answer;
+    }
 }
 
 function multiply(a,b) {
     let answer = a * b;
-    displayText.textContent = answer;
-    return answer;
+    var result = (answer - Math.floor(answer)) !== 0;
+    if(result == true) {
+        displayText.textContent = answer.toFixed(2)
+    } else {
+        displayText.textContent = answer;
+    }
 }
 
 function divide(a,b) {
     let answer = a / b;
-    displayText.textContent = answer;
-    return answer;
+    var result = (answer - Math.floor(answer)) !== 0;
+    if(b == 0) {
+        answer = "Can't divide by 0"
+    }
+    if(result == true) {
+        displayText.textContent = answer.toFixed(2)
+    } else {
+        displayText.textContent = answer;
+    }
 }
 
     // compute
@@ -104,16 +131,16 @@ function operate(operand, a, b) {
     b = Number(b)
     switch(operand) {
         case "+": 
-        console.log(add(a, b))
+        add(a, b)
         break;
         case "-": 
-        console.log(subtract(a,b))
+        subtract(a,b)
         break;
         case "*":
-        console.log(multiply(a,b))
+        multiply(a,b)
         break;
         case "/":
-        console.log(divide(a,b))
+        divide(a,b)
         break;
         default: 
         return null;
